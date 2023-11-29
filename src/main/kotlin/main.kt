@@ -18,6 +18,9 @@ fun main(args: Array<String>) {
             4 -> searchGuest()
             5 -> archiveGuest()
             6 -> listGuests()
+            7  -> addReservationToGuest()
+            8 -> updateReservationInGuest()
+            9 -> deleteAnReservation()
             20 -> save()
             21 -> load()
         }
@@ -43,7 +46,7 @@ fun mainMenu(): Int {
         > |   8) update reservation contents in guest      |
         > |   9) delete reservation from guest             |
         > --------------------------------------------------
-        > |   20) Save Guests                              |
+        > |   20) Save Guests                              |1
         > |   21) Load Guests                              |
         > --------------------------------------------------
         > |   0) Exit                                      |
@@ -160,28 +163,47 @@ fun searchGuest() {
 private fun addReservationToGuest() {
     val guest: Guest? = askUserToChooseActiveGuest()
     if (guest != null) {
-        if (guest.addReservation(Reservation(ReservationId = ScannerInput.readNextInt("\t reservation id "))))
+        val reservationId = ScannerInput.readNextInt("\t Reservation id ")
+        val roomNum = ScannerInput.readNextInt("\t Room number ")
+        val cost = ScannerInput.readNextInt("\t cost ")
+        val numPeople = ScannerInput.readNextInt("\t Number of people ")
+        val isPaid = ScannerInput.readNextBoolean("\t Is the bill paid? ")
+
+        val reservation = Reservation(reservationId, roomNum, cost, numPeople, isPaid)
+
+        if (guest.addReservation(reservation)) {
             println("Add Successful!")
-        else println("Add NOT Successful")
+        } else {
+            println("Add NOT Successful")
+        }
     }
 }
 
-fun updateReservationIDInGuest() {
+
+private fun updateReservationInGuest() {
     val guest: Guest? = askUserToChooseActiveGuest()
     if (guest != null) {
         val reservation: Reservation? = askUserToChooseReservation(guest)
         if (reservation != null) {
-            val newID = ScannerInput.readNextInt("Enter new num: ")
-            if (guest.update(reservation.ReservationId, Reservation(ReservationId = newID))) {
-                println("reservation ID updated")
+            val newID = ScannerInput.readNextInt("Enter new Reservation ID: ")
+            val newRoomNum = ScannerInput.readNextInt("Enter new Room Number: ")
+            val newCost = ScannerInput.readNextInt("Enter new Cost: ")
+            val newNumPeople = ScannerInput.readNextInt("Enter new Number of People: ")
+            val newIsPaid = ScannerInput.readNextBoolean("Is the bill paid? ")
+
+            val updatedReservation = Reservation(newID, newRoomNum, newCost, newNumPeople, newIsPaid)
+
+            if (guest.update(reservation.ReservationId, updatedReservation)) {
+                println("Reservation updated successfully")
             } else {
-                println("reservation ID NOT updated")
+                println("Failed to update Reservation")
             }
         } else {
             println("Invalid Reservation Id")
         }
     }
 }
+
 
 fun deleteAnReservation() {
     val guest: Guest? = askUserToChooseActiveGuest()

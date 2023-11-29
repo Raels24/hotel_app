@@ -23,6 +23,8 @@ object ScannerInput {
      * @param prompt  The information printed to the console for the user to read
      * @return The number read from the user and verified as an int.
      */
+
+    private val scanner = Scanner(System.`in`)
     @JvmStatic
     fun readNextInt(prompt: String?): Int {
         do {
@@ -77,4 +79,18 @@ object ScannerInput {
         print(prompt)
         return Scanner(System.`in`).next()[0]
     }
+
+    fun readNextBoolean(prompt: String): Boolean {
+        while (true) {
+            print("$prompt (Yes/No): ")
+            val input = scanner.next().toLowerCase()
+            when (input) {
+                "yes" -> return true
+                "no" -> return false
+                else -> println("Invalid input. Please enter 'Yes' or 'No'.")
+            }
+        }
+    }
+
+
 }
