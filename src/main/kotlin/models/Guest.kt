@@ -5,7 +5,7 @@ data class Guest(
     var guestName: String = "",
     var guestPhone: String = "",
     var guestEmail: String = "",
-
+    var isGuestArchived: Boolean = false
     )
 
 

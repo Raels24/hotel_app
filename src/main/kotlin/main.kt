@@ -15,6 +15,8 @@ fun main(args: Array<String>) {
             2 -> updateGuest()
             3 -> deleteGuest()
             4 -> searchGuest()
+            5 -> archiveGuest()
+            6 -> listGuests()
             20 -> save()
             21 -> load()
         }
@@ -32,6 +34,8 @@ fun mainMenu(): Int {
         > |   2) Update a guest               |
         > |   3) Delete a guest               |
         > |   4) Search guest                 |
+        > |   5) Archive guest                |
+        > |   6) list guests
         > -------------------------------------
         > |   20) Save Guests                 |
         > |   21) Load Guests                 |
@@ -57,22 +61,72 @@ fun addGuest() {
 }
 
 fun updateGuest() {
-    val guestID = ScannerInput.readNextInt("Enter ID of the guest to update: ")
-    val updatedGuest = Guest(
-        guestID = guestID,
-        guestName = ScannerInput.readNextLine("Enter updated name of guest: "),
-        guestPhone = ScannerInput.readNextLine("Enter updated guest phone number: "),
-        guestEmail = ScannerInput.readNextLine("Enter updated guest email: ")
-    )
-    val isUpdated = guestAPI.update(guestID, updatedGuest)
+    listGuests()
+    if (guestAPI.numberOfGuests() > 0) {
+        // only ask the user to choose the guest if guests exist
+        val id = ScannerInput.readNextInt("Enter the id of the guest to update: ")
+        if (guestAPI.findGuest(id) != null) {
+            val guestID = ScannerInput.readNextInt("Enter guest id: ")
+            val guestName = ScannerInput.readNextLine("Enter guest name: ")
+            val guestPhone = ScannerInput.readNextLine("Enter guest's phone number: ")
+            val guestEmail = ScannerInput.readNextLine("Enter guest's email: ")
 
-    if (isUpdated) {
-        println("Updated Successfully")
-    } else {
-        println("Update Failed. Guest not found.")
+            // Create a Guest object with the new details
+            val updatedGuest = Guest(guestID, guestName, guestPhone, guestEmail, false)
+
+            // Pass the index of the guest and the new guest details to GuestAPI for updating and check for success.
+            if (guestAPI.update(id, updatedGuest)) {
+                println("Update Successful")
+            } else {
+                println("Update Failed")
+            }
+        } else {
+            println("There are no guests for this index number")
+        }
     }
 }
 
+
+fun listGuests() {
+    if (guestAPI.numberOfGuests() > 0) {
+        val option = ScannerInput.readNextInt(
+            """
+                  > --------------------------------
+                  > |   1) View ALL guests         |
+                  > |   2) View ACTIVE guests      |
+                  > |   3) View ARCHIVED guests    |
+                  > --------------------------------
+         > ==>> """.trimMargin(">")
+        )
+
+        when (option) {
+            1 -> listAllGuests()
+            2 -> listActiveGuests()
+            3 -> listArchivedGuests()
+            else -> println("Invalid option entered: $option")
+        }
+    } else {
+        println("Option Invalid - No Guests stored")
+    }
+}
+
+fun listAllGuests() = println(guestAPI.listAllGuests())
+fun listActiveGuests() = println(guestAPI.listActiveGuests())
+fun listArchivedGuests() = println(guestAPI.listArchivedGuests())
+
+fun archiveGuest() {
+    listActiveGuests()
+    if (guestAPI.numberOfActiveGuests() > 0) {
+        // only ask the user to choose the guest to archive if active guest exist
+        val id = ScannerInput.readNextInt("Enter the id of the guest to archive: ")
+        // pass the index of the guest to guestAPI for archiving and check for success.
+        if (guestAPI.archiveGuest(id)) {
+            println("Archive Successful!")
+        } else {
+            println("Archive NOT Successful")
+        }
+    }
+}
 fun deleteGuest() {
     val guestID = ScannerInput.readNextInt("Enter ID of the guest to delete: ")
     val isDeleted = guestAPI.delete(guestID)
