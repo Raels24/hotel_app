@@ -1,5 +1,6 @@
 import controllers.GuestAPI
 import models.Guest
+import models.Reservation
 import persistence.XMLSerializer
 import utils.ScannerInput
 import java.io.File
@@ -144,18 +145,90 @@ fun deleteGuest() {
 }
 
 fun searchGuest() {
-    val guestID = ScannerInput.readNextInt("Enter guest ID to search: ")
-    val result = guestAPI.searchGuestsById(guestID)
-
-    if (result != "Guest not found.") {
-        println("Guest found:\n$result")
+    val searchID = ScannerInput.readNextInt("Enter the guestID to search by: ")
+    val searchResults = guestAPI.searchGuestsById(searchID)
+    if (searchResults.isEmpty()) {
+        println("No notes found")
     } else {
-        println("Guest not found.")
+        println(searchResults)
     }
 }
 
 
 
+
+private fun addReservationToGuest() {
+    val guest: Guest? = askUserToChooseActiveGuest()
+    if (guest != null) {
+        if (guest.addReservation(Reservation(ReservationId = ScannerInput.readNextInt("\t reservation id "))))
+            println("Add Successful!")
+        else println("Add NOT Successful")
+    }
+}
+
+fun updateReservationIDInGuest() {
+    val guest: Guest? = askUserToChooseActiveGuest()
+    if (guest != null) {
+        val reservation: Reservation? = askUserToChooseReservation(guest)
+        if (reservation != null) {
+            val newID = ScannerInput.readNextInt("Enter new num: ")
+            if (guest.update(reservation.ReservationId, Reservation(ReservationId = newID))) {
+                println("reservation ID updated")
+            } else {
+                println("reservation ID NOT updated")
+            }
+        } else {
+            println("Invalid Reservation Id")
+        }
+    }
+}
+
+fun deleteAnReservation() {
+    val guest: Guest? = askUserToChooseActiveGuest()
+    if (guest != null) {
+        val reservation: Reservation? = askUserToChooseReservation(guest)
+        if (reservation != null) {
+            val isDeleted = guest.delete(reservation.ReservationId)
+            if (isDeleted) {
+                println("Delete Successful!")
+            } else {
+                println("Delete NOT Successful")
+            }
+        }
+    }
+}
+
+
+//------------------------------------
+//HELPER FUNCTIONS
+//--
+private fun askUserToChooseActiveGuest(): Guest? {
+    listActiveGuests()
+    if (guestAPI.numberOfActiveGuests() > 0) {
+        val guest = guestAPI.findGuest(ScannerInput.readNextInt("\nEnter the id of the guest: "))
+        if (guest != null) {
+            if (guest.isGuestArchived) {
+                println("guest is NOT Active, it is Archived")
+            } else {
+                return guest //chosen guest is active
+            }
+        } else {
+            println("guest id is not valid")
+        }
+    }
+    return null //selected guest is not active
+}
+
+private fun askUserToChooseReservation(guest: Guest): Reservation? {
+    if (guest.numberOfReservations() > 0) {
+        print(guest.listReservations())
+        return guest.findOne(ScannerInput.readNextInt("\nEnter the id of reservation: "))
+    }
+    else{
+        println ("No reservations for chosen guest")
+        return null
+    }
+}
 
 fun save() {
     try {

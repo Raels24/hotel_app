@@ -60,7 +60,7 @@ class GuestAPI(serializerType: Serializer) {
 
 
 
-    fun searchGuestsById(searchGuestId: Int): String {
+        fun searchGuestsById(searchGuestId: Int): String {
         val matchingGuests = guests.filter { it.guestID == searchGuestId }
         if (matchingGuests.isNotEmpty()) {
             return matchingGuests.joinToString(separator = "\n") { guest ->
