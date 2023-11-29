@@ -50,6 +50,6 @@ data class Guest(
 
     override fun toString(): String {
         val archived = if (isGuestArchived) 'Y' else 'N'
-        return "$guestID: ${guestName}st, Priority($guestPhone), Category($guestEmail), Archived($archived) \n${listReservations()}"
+        return "id $guestID: name $guestName, Phone($guestPhone), Email($guestEmail), Archived($archived) \n${listReservations()}"
     }
 }
