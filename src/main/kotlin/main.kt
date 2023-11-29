@@ -26,22 +26,27 @@ fun main(args: Array<String>) {
 fun mainMenu(): Int {
     return ScannerInput.readNextInt(
         """
-        > -------------------------------------
-        > |         Hotel Trivago             |
-        > -------------------------------------
-        > | NOTE MENU                         |
-        > |   1) Add a Guest                  |
-        > |   2) Update a guest               |
-        > |   3) Delete a guest               |
-        > |   4) Search guest                 |
-        > |   5) Archive guest                |
-        > |   6) list guests
-        > -------------------------------------
-        > |   20) Save Guests                 |
-        > |   21) Load Guests                 |
-        > -------------------------------------
-        > |   0) Exit                         |
-        > -------------------------------------
+        > --------------------------------------------------
+        > |         Hotel Trivago                          |
+        > --------------------------------------------------
+        > | Guest MENU                                     |
+        > |   1) Add a Guest                               |
+        > |   2) Update a guest                            |
+        > |   3) Delete a guest                            |
+        > |   4) Search guest                              |
+        > |   5) Archive guest                             |
+        > |   6) list guests                               |
+        > |------------------------------------------------|
+        > | Reservation Menu                               |
+        > |   7) add reservation to guest                  |
+        > |   8) update reservation contents in guest      |
+        > |   9) delete reservation from guest             |
+        > --------------------------------------------------
+        > |   20) Save Guests                              |
+        > |   21) Load Guests                              |
+        > --------------------------------------------------
+        > |   0) Exit                                      |
+        > --------------------------------------------------
         > ==>> """.trimMargin(">")
     )
 }
