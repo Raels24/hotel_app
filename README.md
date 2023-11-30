@@ -10,7 +10,7 @@
 - there is currently a skeleton menu
 
 
-##features
+## features
 
 - add Guest
 - update guest
@@ -18,5 +18,8 @@
 - search guest
 - archive guest
 - list guests
+- add reservation to guest
+- update reservation contents in guest
+- delete reservation from guest
 - save
 - load
