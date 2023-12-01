@@ -18,7 +18,7 @@ fun main(args: Array<String>) {
             4 -> searchGuest()
             5 -> archiveGuest()
             6 -> listGuests()
-            7  -> addReservationToGuest()
+            7 -> addReservationToGuest()
             8 -> updateReservationInGuest()
             9 -> deleteAnReservation()
             10 -> searchReservations()
@@ -97,7 +97,6 @@ fun updateGuest() {
     }
 }
 
-
 fun listGuests() {
     if (guestAPI.numberOfGuests() > 0) {
         val option = ScannerInput.readNextInt(
@@ -159,9 +158,6 @@ fun searchGuest() {
     }
 }
 
-
-
-
 private fun addReservationToGuest() {
     val guest: Guest? = askUserToChooseActiveGuest()
     if (guest != null) {
@@ -180,7 +176,6 @@ private fun addReservationToGuest() {
         }
     }
 }
-
 
 private fun updateReservationInGuest() {
     val guest: Guest? = askUserToChooseActiveGuest()
@@ -206,7 +201,6 @@ private fun updateReservationInGuest() {
     }
 }
 
-
 fun deleteAnReservation() {
     val guest: Guest? = askUserToChooseActiveGuest()
     if (guest != null) {
@@ -222,7 +216,6 @@ fun deleteAnReservation() {
     }
 }
 
-
 fun searchReservations() {
     val searchReservationId = ScannerInput.readNextInt("Enter the reservation ID: ")
     val searchResults = guestAPI.searchReservationById(searchReservationId.toString())
@@ -233,11 +226,9 @@ fun searchReservations() {
     }
 }
 
-
-
-//------------------------------------
-//HELPER FUNCTIONS
-//--
+// ------------------------------------
+// HELPER FUNCTIONS
+// --
 private fun askUserToChooseActiveGuest(): Guest? {
     listActiveGuests()
     if (guestAPI.numberOfActiveGuests() > 0) {
@@ -246,22 +237,21 @@ private fun askUserToChooseActiveGuest(): Guest? {
             if (guest.isGuestArchived) {
                 println("guest is NOT Active, it is Archived")
             } else {
-                return guest //chosen guest is active
+                return guest // chosen guest is active
             }
         } else {
             println("guest id is not valid")
         }
     }
-    return null //selected guest is not active
+    return null // selected guest is not active
 }
 
 private fun askUserToChooseReservation(guest: Guest): Reservation? {
     if (guest.numberOfReservations() > 0) {
         print(guest.listReservations())
         return guest.findOne(ScannerInput.readNextInt("\nEnter the id of reservation: "))
-    }
-    else{
-        println ("No reservations for chosen guest")
+    } else {
+        println("No reservations for chosen guest")
         return null
     }
 }

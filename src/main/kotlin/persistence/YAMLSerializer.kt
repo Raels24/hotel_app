@@ -1,7 +1,5 @@
 package persistence
 
-import models.Guest
-import models.Reservation
 import org.yaml.snakeyaml.Yaml
 import java.io.File
 import java.io.FileReader

@@ -1,20 +1,17 @@
 package utils
 
-import models.Reservation
 import models.Guest
+import models.Reservation
 
 object Utilities {
-
-
 
     @JvmStatic
     fun formatListString(guestToFormat: List<Guest>): String =
         guestToFormat
-            .joinToString(separator = "\n") { guest ->  "$guest" }
+            .joinToString(separator = "\n") { guest -> "$guest" }
 
     @JvmStatic
     fun formatSetString(reservationsToFormat: Set<Reservation>): String =
         reservationsToFormat
-            .joinToString(separator = "\n") { reservation ->  "\t$reservation" }
-
+            .joinToString(separator = "\n") { reservation -> "\t$reservation" }
 }

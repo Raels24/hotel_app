@@ -1,7 +1,7 @@
 package utils
 
 import java.lang.NumberFormatException
-import java.util.*
+import java.util.Scanner
 
 /**
  * This class provides methods for the robust handling of I/O using Scanner.
@@ -25,6 +25,7 @@ object ScannerInput {
      */
 
     private val scanner = Scanner(System.`in`)
+
     @JvmStatic
     fun readNextInt(prompt: String?): Int {
         do {
@@ -91,6 +92,4 @@ object ScannerInput {
             }
         }
     }
-
-
 }
