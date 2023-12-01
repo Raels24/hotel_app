@@ -21,6 +21,7 @@ fun main(args: Array<String>) {
             7  -> addReservationToGuest()
             8 -> updateReservationInGuest()
             9 -> deleteAnReservation()
+            10 -> searchReservations()
             20 -> save()
             21 -> load()
         }
@@ -45,8 +46,9 @@ fun mainMenu(): Int {
         > |   7) add reservation to guest                  |
         > |   8) update reservation contents in guest      |
         > |   9) delete reservation from guest             |
+        > |   10) search reservations                      |
         > --------------------------------------------------
-        > |   20) Save Guests                              |1
+        > |   20) Save Guests                              |
         > |   21) Load Guests                              |
         > --------------------------------------------------
         > |   0) Exit                                      |
@@ -219,6 +221,18 @@ fun deleteAnReservation() {
         }
     }
 }
+
+
+fun searchReservations() {
+    val searchReservationId = ScannerInput.readNextInt("Enter the reservation ID: ")
+    val searchResults = guestAPI.searchReservationById(searchReservationId.toString())
+    if (searchResults.isEmpty()) {
+        println("No items found")
+    } else {
+        println(searchResults)
+    }
+}
+
 
 
 //------------------------------------

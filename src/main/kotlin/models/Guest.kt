@@ -8,21 +8,20 @@ data class Guest(
     var guestPhone: String = "",
     var guestEmail: String = "",
     var isGuestArchived: Boolean = false,
-    var reservations : MutableSet<Reservation> = mutableSetOf()) {
+    var reservations: MutableSet<Reservation> = mutableSetOf()) {
 
-    private var lastReservationId = 0
-    private fun getReservationId(): Int = lastReservationId++
+
+
 
     fun addReservation(reservation: Reservation): Boolean {
-        reservation.ReservationId = getReservationId()
-        return reservations.add(reservation)
-
+        reservations.add(reservation)
+        return true
     }
 
     fun numberOfReservations() = reservations.size
 
-    fun findOne(id: Int): Reservation? {
-        return reservations.find { reservation -> reservation.ReservationId == id }
+    fun findOne(reservationId: Int): Reservation? {
+        return reservations.find { it.ReservationId == reservationId }
     }
 
 
@@ -30,22 +29,27 @@ data class Guest(
         return reservations.removeIf { reservation -> reservation.ReservationId == id }
     }
 
-    fun update(id: Int, newReservation: Reservation): Boolean {
-        val foundReservation = findOne(id)
+    fun update(reservationId: Int, updatedReservation: Reservation): Boolean {
+        val foundReservation = findOne(reservationId)
 
-
-        if (foundReservation != null) {
-            foundReservation.RoomNum = newReservation.RoomNum
-            foundReservation.cost = newReservation.cost
-            foundReservation.numPeople = newReservation.numPeople
-            return true
+        return if (foundReservation != null) {
+            foundReservation.apply {
+                RoomNum = updatedReservation.RoomNum
+                cost = updatedReservation.cost
+                numPeople = updatedReservation.numPeople
+                isPaid = updatedReservation.isPaid
+            }
+            true
+        } else {
+            false
         }
-        return false
     }
+
 
     fun listReservations() =
         if (reservations.isEmpty())  "\tNO RESERVATIONS ADDED"
         else  Utilities.formatSetString(reservations)
+
 
 
     override fun toString(): String {

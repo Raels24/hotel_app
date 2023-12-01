@@ -28,12 +28,25 @@ class GuestAPI(serializerType: Serializer) {
     // ----------------------------------------------
     fun add(guest: Guest): Boolean {
         guest.guestID = getId()
-        lastId = guest.guestID  // Update lastId
-        return guests.add(guest)
+        val added = guests.add(guest)
+        lastId = guest.guestID  // Update lastId after adding the guest
+        return added
     }
 
 
-    fun delete(id: Int) = guests.removeIf { guest -> guest.guestID == id }
+
+
+    fun delete(id: Int): Boolean {
+        val guestToDelete = findGuest(id)
+        return if (guestToDelete != null) {
+            guests.removeIf { guest -> guest.guestID == id }
+            true
+        } else {
+            false
+        }
+    }
+
+
 
     fun update(id: Int, updatedGuest: Guest?): Boolean {
         // find the guest object by the index number
@@ -109,6 +122,29 @@ class GuestAPI(serializerType: Serializer) {
     fun isValidListIndex(index: Int, list: List<Any>): Boolean {
         return (index >= 0 && index < list.size)
     }
+
+    fun searchReservationById(searchString: String): String {
+        return if (numberOfGuests() == 0) {
+            "No guests stored"
+        } else {
+            var listOfGuests = ""
+            for (guest in guests) {
+                for (reservation in guest.reservations) {
+                    if (reservation.ReservationId.toString() == searchString) {
+                        listOfGuests += "${guest.guestID}: ${guest.guestName} \n\t${reservation}\n"
+                    }
+                }
+            }
+            if (listOfGuests == "") {
+                "No reservation found for ID: $searchString"
+            } else {
+                listOfGuests
+            }
+        }
+    }
+
+
+
 
     /**
      * Checks if the given index is within the valid range for the notes list.
