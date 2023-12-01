@@ -1,32 +1,69 @@
 plugins {
- //   id 'org.jetbrains.kotlin.jvm' version '1.8.21'
-    id 'org.jetbrains.kotlin.jvm' version '1.7.10'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.0'
+    // Plugin for Dokka - KDoc generating tool
+    id 'org.jetbrains.dokka' version '1.9.10'
+    id 'application'
+    id 'jacoco'
+    id 'org.jlleitschuh.gradle.ktlint' version '11.3.1'
 }
 
-group = 'ie.setu'
-version = '1.0-SNAPSHOT'
+group = "ie.setu"
+version = "1.0"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
+    testImplementation "org.jetbrains.kotlin:kotlin-test:1.9.0"
 
-    //For Streaming to XML and JSON
-    implementation("com.thoughtworks.xstream:xstream:1.4.18")
-    implementation("org.codehaus.jettison:jettison:1.4.1")
-    implementation ("org.yaml:snakeyaml:1.29")
+    // dependencies for logging
+    implementation("io.github.microutils:kotlin-logging:2.1.23")
+    implementation("org.slf4j:slf4j-simple:1.7.36")
+
+    // For Streaming to XML and JSON
+    //implementation("com.thoughtworks.xstream:xstream:1.4.18")
+    //implementation("org.codehaus.jettison:jettison:1.4.1")
+    implementation "org.yaml:snakeyaml:1.29"
+
+    implementation "io.github.microutils:kotlin-logging:2.1.23"
+    implementation "org.slf4j:slf4j-simple:1.7.36"
+    implementation "com.thoughtworks.xstream:xstream:1.4.18"
+    implementation "org.codehaus.jettison:jettison:1.4.1"
+    implementation "org.jetbrains.dokka:dokka-gradle-plugin:1.9.10"
 }
 
-test {
+tasks.test {
     useJUnitPlatform()
+    //report is always generated after tests run
+    finalizedBy(tasks.jacocoTestReport)
 }
 
-compileKotlin {
-    kotlinOptions.jvmTarget = '1.8'
+kotlin {
+    jvmToolchain(8)
 }
 
-compileTestKotlin {
-    kotlinOptions.jvmTarget = '1.8'
+application {
+    mainClassName = "MainKt"
 }
+
+jar {
+    manifest {
+        attributes(
+                "Main-Class": "MainKt"
+        )
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from(sourceSets.main.output)
+
+    configurations.runtimeClasspath.each { file ->
+        if (file.name.endsWith('.jar')) {
+            from(zipTree(file))
+        }
+    }
+}
+
+
+

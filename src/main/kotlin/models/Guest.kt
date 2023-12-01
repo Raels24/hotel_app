@@ -8,10 +8,8 @@ data class Guest(
     var guestPhone: String = "",
     var guestEmail: String = "",
     var isGuestArchived: Boolean = false,
-    var reservations: MutableSet<Reservation> = mutableSetOf()) {
-
-
-
+    var reservations: MutableSet<Reservation> = mutableSetOf()
+) {
 
     fun addReservation(reservation: Reservation): Boolean {
         reservations.add(reservation)
@@ -23,7 +21,6 @@ data class Guest(
     fun findOne(reservationId: Int): Reservation? {
         return reservations.find { it.ReservationId == reservationId }
     }
-
 
     fun delete(id: Int): Boolean {
         return reservations.removeIf { reservation -> reservation.ReservationId == id }
@@ -45,12 +42,12 @@ data class Guest(
         }
     }
 
-
     fun listReservations() =
-        if (reservations.isEmpty())  "\tNO RESERVATIONS ADDED"
-        else  Utilities.formatSetString(reservations)
-
-
+        if (reservations.isEmpty()) {
+            "\tNO RESERVATIONS ADDED"
+        } else {
+            Utilities.formatSetString(reservations)
+        }
 
     override fun toString(): String {
         val archived = if (isGuestArchived) 'Y' else 'N'
