@@ -7,4 +7,3 @@ data class Reservation(
     var numPeople: Int = 0,
     var isPaid: Boolean = false
 )
-

@@ -2,7 +2,6 @@ package models
 
 import utils.Utilities
 
-
 /**
  * The Guest data class represents a hotel guest, including their ID, name, contact details,
  * archived status, and a set of reservations. It provides methods for managing reservations,
@@ -24,7 +23,6 @@ data class Guest(
     var reservations: MutableSet<Reservation> = mutableSetOf()
 ) {
 
-
     /**
      * Adds a reservation to the guest's set of reservations.
      *
@@ -36,14 +34,12 @@ data class Guest(
         return true
     }
 
-
     /**
      * Gets the number of reservations made by the guest.
      *
      * @return The number of reservations.
      */
     fun numberOfReservations() = reservations.size
-
 
     /**
      * Finds a reservation in the guest's set based on its ID.
@@ -55,7 +51,6 @@ data class Guest(
         return reservations.find { it.ReservationId == reservationId }
     }
 
-
     /**
      * Deletes a reservation from the guest's set based on its ID.
      *
@@ -65,7 +60,6 @@ data class Guest(
     fun delete(id: Int): Boolean {
         return reservations.removeIf { reservation -> reservation.ReservationId == id }
     }
-
 
     /**
      * Updates the details of an existing reservation in the guest's set.
@@ -90,7 +84,6 @@ data class Guest(
         }
     }
 
-
     /**
      * Formats the list of reservations as a string.
      *
@@ -103,7 +96,6 @@ data class Guest(
             Utilities.formatSetString(reservations)
         }
 
-
     /**
      * Converts the guest object to a string representation, including guest details
      * and a list of reservations.
@@ -115,4 +107,3 @@ data class Guest(
         return "id $guestID: name $guestName, Phone($guestPhone), Email($guestEmail), Archived($archived) \n${listReservations()}"
     }
 }
-
