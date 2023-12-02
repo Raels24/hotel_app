@@ -4,7 +4,6 @@ import models.Guest
 import persistence.Serializer
 import utils.Utilities.formatListString
 
-
 /**
  * The GuestAPI class manages the guests in a hotel. It provides methods for adding, updating,
  * deleting, and searching for guests, as well as handling reservations. The class uses a Serializer
@@ -14,23 +13,17 @@ import utils.Utilities.formatListString
  * @property guests The list of guests managed by the GuestAPI.
  * @property lastId The last used ID for assigning unique IDs to guests.
  */
-class GuestAPI(serializerType: Serializer) {
+class GuestAPI(private val serializer: Serializer) {
 
-    private var serializer: Serializer = serializerType
-    private var guests = ArrayList<Guest>()
-
-    // ----------------------------------------------
-    //  For Managing the id internally in the program
-    // ----------------------------------------------
+    private val guests = mutableListOf<Guest>()
     private var lastId = 0
-
 
     /**
      * Generates a new unique ID for guests.
      *
      * @return A new unique ID.
      */
-    private fun getId(): Int {
+    private fun generateId(): Int {
         lastId++
         return lastId
     }
@@ -40,36 +33,31 @@ class GuestAPI(serializerType: Serializer) {
      *
      * @return The number of guests.
      */
-    fun numberOfGuests() = guests.size
+    fun numberOfGuests(): Int = guests.size
 
-    // ----------------------------------------------
-    //  CRUD METHODS FOR guest ArrayList
-    // ----------------------------------------------
+    // CRUD METHODS FOR guest ArrayList
 
     /**
-     * Adds a new guest to the guest list.
+     * Adds a [Guest] to the list of guests managed by the GuestAPI.
      *
      * @param guest The guest to be added.
      * @return `true` if the guest was added successfully, `false` otherwise.
      */
     fun add(guest: Guest): Boolean {
-        guest.guestID = getId()
-        val added = guests.add(guest)
-        lastId = guest.guestID // Update lastId after adding the guest
-        return added
+        guest.guestID = generateId()
+        return guests.add(guest)
     }
 
     /**
-     * Deletes a guest based on their ID.
+     * Deletes a guest with the specified ID from the list of guests.
      *
      * @param id The ID of the guest to be deleted.
-     * @return `true` if the guest was deleted successfully, `false` otherwise.
+     * @return `true` if the guest was deleted successfully, `false` if the guest was not found.
      */
-
     fun delete(id: Int): Boolean {
         val guestToDelete = findGuest(id)
         return if (guestToDelete != null) {
-            guests.removeIf { guest -> guest.guestID == id }
+            guests.remove(guestToDelete)
             true
         } else {
             false
@@ -77,83 +65,57 @@ class GuestAPI(serializerType: Serializer) {
     }
 
     /**
-     * Updates the details of an existing guest.
+     * Updates the details of a guest with the specified ID.
      *
      * @param id The ID of the guest to be updated.
-     * @param updatedGuest The updated guest details.
-     * @return `true` if the update was successful, `false` otherwise.
+     * @param updatedGuest The updated details for the guest.
+     * @return `true` if the guest was updated successfully, `false` if the guest was not found.
      */
     fun update(id: Int, updatedGuest: Guest?): Boolean {
-        // find the guest object by the index number
         val foundGuest = findGuest(id)
-
-        // if the guest exists, use the guest details passed as parameters to update the found guest in the ArrayList.
-        if ((foundGuest != null) && (updatedGuest != null)) {
-            foundGuest.guestID = updatedGuest.guestID
-            foundGuest.guestName = updatedGuest.guestName
-            foundGuest.guestPhone = updatedGuest.guestPhone
-            foundGuest.guestEmail = updatedGuest.guestEmail
+        if (foundGuest != null && updatedGuest != null) {
+            foundGuest.apply {
+                guestID = updatedGuest.guestID
+                guestName = updatedGuest.guestName
+                guestPhone = updatedGuest.guestPhone
+                guestEmail = updatedGuest.guestEmail
+            }
             return true
         }
-
-        // if the guest was not found, return false, indicating that the update was not successful
         return false
     }
 
-
     /**
-     * Finds a guest based on their ID.
+     * Finds a guest with the specified ID in the list of guests.
      *
      * @param id The ID of the guest to be found.
-     * @return The found guest or `null` if not found.
+     * @return The found guest or `null` if no guest is found with the specified ID.
      */
-    fun findGuest(id: Int): Guest? {
-        return guests.find { it.guestID == id }
-    }
+    fun findGuest(id: Int): Guest? = guests.find { it.guestID == id }
 
+    // Listing Methods for Guest ArrayList
 
-    /**
-     * Searches for guests by their ID and returns a formatted string.
-     *
-     * @param searchGuestId The ID to search for.
-     * @return A formatted string of matching guests or an error message.
-     */
-    fun searchGuestsById(searchGuestId: Int): String {
-        val matchingGuests = guests.filter { it.guestID == searchGuestId }
-        if (matchingGuests.isNotEmpty()) {
-            return matchingGuests.joinToString(separator = "\n") { guest ->
-                guests.indexOf(guest).toString() + ": " + guest.toString()
-            }
-        } else {
-            return "Guest not found."
-        }
-    }
+    fun listAllGuests(): String =
+        if (guests.isEmpty()) "No guests stored" else formatListString(guests)
 
-    /**
-     * Searches for guests by their name and returns a formatted string.
-     *
-     * @param searchGuestName The name to search for.
-     * @return A formatted string of matching guests or an error message.
-     */
-    fun searchGuestsByName(searchGuestName: String): String {
-        val matchingGuests = guests.filter { it.guestName == searchGuestName }
-        if (matchingGuests.isNotEmpty()) {
-            return matchingGuests.joinToString(separator = "\n") { guest ->
-                guests.indexOf(guest).toString() + ": " + guest.toString()
-            }
-        } else {
-            return "Guest not found."
-        }
-    }
+    fun listActiveGuests(): String =
+        if (numberOfActiveGuests() == 0) "No active guests stored"
+        else formatListString(guests.filter { !it.isGuestArchived })
 
-    /**
-     * Archives an active guest, making them inactive.
-     *
-     * @param indexToArchive The index of the guest to archive.
-     * @return `true` if the archiving was successful, `false` otherwise.
-     */
+    fun listArchivedGuests(): String =
+        if (numberOfArchivedGuests() == 0) "No archived guests stored"
+        else formatListString(guests.filter { it.isGuestArchived })
+
+    // Counting Methods for Guest ArrayList
+
+    fun numberOfArchivedGuests(): Int = guests.count { it.isGuestArchived }
+
+    fun numberOfActiveGuests(): Int = guests.count { !it.isGuestArchived }
+
+    // Other methods
+
     fun archiveGuest(indexToArchive: Int): Boolean {
-        if (isValidIndex(indexToArchive)) {
+        if (isValidListIndex(indexToArchive, guests)) {
             val guestToArchive = guests[indexToArchive]
             if (!guestToArchive.isGuestArchived) {
                 guestToArchive.isGuestArchived = true
@@ -163,120 +125,84 @@ class GuestAPI(serializerType: Serializer) {
         return false
     }
 
-    // ----------------------------------------------
-    //  LISTING METHODS FOR Guest ArrayList
-    // ----------------------------------------------
 
     /**
-     * Lists all guests and their details.
+     * Searches for guests by their ID in the list of guests.
      *
-     * @return A formatted string of all guests or an error message if none are stored.
+     * @param searchGuestId The ID to search for.
+     * @return A formatted string containing matching guests or a message indicating no guests found.
      */
-    fun listAllGuests() =
-            if (guests.isEmpty()) {
-                "No guests stored"
-            } else {
-                formatListString(guests)
-            }
-
-
-    /**
-     * Lists active guests and their details.
-     *
-     * @return A formatted string of active guests or an error message if none are stored.
-     */
-    fun listActiveGuests() =
-            if (numberOfActiveGuests() == 0) {
-                "No active Guest stored"
-            } else {
-                formatListString(guests.filter { guest -> !guest.isGuestArchived })
-            }
-
-
-    /**
-     * Lists archived guests and their details.
-     *
-     * @return A formatted string of archived guests or an error message if none are stored.
-     */
-    fun listArchivedGuests() =
-            if (numberOfArchivedGuests() == 0) {
-                "No archived Guest stored"
-            } else {
-                formatListString(guests.filter { guest -> guest.isGuestArchived })
-            }
-
-    // ----------------------------------------------
-    //  COUNTING METHODS FOR Guest ArrayList
-    // ----------------------------------------------
-
-    /**
-     * Gets the number of archived guests.
-     *
-     * @return The number of archived guests.
-     */
-
-    fun numberOfArchivedGuests(): Int = guests.count { guest: Guest -> guest.isGuestArchived }
-
-    /**
-     * Gets the number of active guests.
-     *
-     * @return The number of active guests.
-     */
-    fun numberOfActiveGuests(): Int = guests.count { guest: Guest -> !guest.isGuestArchived }
-
-    /**
-     * Checks if the given index is within the valid range for the guests list.
-     *
-     * @param index The index to be validated.
-     * @return `true` if the index is valid, `false` otherwise.
-     */
-    fun isValidListIndex(index: Int, list: List<Any>): Boolean {
-        return (index >= 0 && index < list.size)
-    }
-
-
-    /**
-     * Searches for reservations by ID and returns a formatted string.
-     *
-     * @param searchString The ID to search for.
-     * @return A formatted string of matching reservations or an error message.
-     */
-    fun searchReservationById(searchString: String): String {
-        return if (numberOfGuests() == 0) {
-            "No guests stored"
+    fun searchGuestById(searchGuestId: Int): String {
+        val matchingGuests = guests.filter { it.guestID == searchGuestId }
+        return if (matchingGuests.isNotEmpty()) {
+            formatListString(matchingGuests)
         } else {
-            var listOfGuests = ""
-            for (guest in guests) {
-                for (reservation in guest.reservations) {
-                    if (reservation.ReservationId.toString() == searchString) {
-                        listOfGuests += "${guest.guestID}: ${guest.guestName} \n\t${reservation}\n"
-                    }
-                }
-            }
-            if (listOfGuests == "") {
-                "No reservation found for ID: $searchString"
-            } else {
-                listOfGuests
-            }
+            "Guest not found."
         }
     }
 
     /**
-     * Checks if the given index is within the valid range for the provided list.
+     * Searches for guests by their name in a case-insensitive manner.
      *
-     * @param index The index to be validated.
-     * @param list The list to be checked against.
+     * @param searchGuestName The name to search for.
+     * @return A formatted string containing matching guests or a message indicating no guests found.
+     */
+    fun searchGuestByName(searchGuestName: String): String {
+        val matchingGuests = guests.filter { it.guestName.contains(searchGuestName, ignoreCase = true) }
+        return if (matchingGuests.isNotEmpty()) {
+            formatListString(matchingGuests)
+        } else {
+            "Guest not found."
+        }
+    }
+
+
+    /**
+     * Searches for reservations by their ID across all guests.
+     *
+     * @param searchReservationId The ID to search for.
+     * @return A formatted string containing matching reservations or a message indicating no reservations found.
+     */
+    fun searchReservationById(searchReservationId: Int): String {
+        val matchingReservations = guests.flatMap { guest ->
+            guest.reservations.filter { it.ReservationId == searchReservationId }
+                .map { "${guest.guestID}: ${guest.guestName} \n\t$it" }
+        }
+
+        return if (matchingReservations.isNotEmpty()) {
+            matchingReservations.joinToString("\n")
+        } else {
+            "No reservations found for the provided ID."
+        }
+    }
+
+    /**
+     * Checks whether the given index is a valid index in the specified list.
+     *
+     * @param index The index to check.
+     * @param list The list to check against.
      * @return `true` if the index is valid, `false` otherwise.
      */
-    fun isValidIndex(index: Int): Boolean {
-        return isValidListIndex(index, guests)
-    }
+    fun isValidListIndex(index: Int, list: List<Any>): Boolean = index in 0 until list.size
 
+
+    /**
+     * Loads guest data from the serializer and replaces the current list of guests.
+     *
+     * @throws Exception If there is an error while loading the guest data.
+     */
     @Throws(Exception::class)
     fun load() {
-        guests = serializer.read() as ArrayList<Guest>
+        guests.clear()
+        guests.addAll(serializer.read() as List<Guest>)
     }
 
+
+    /**
+     * Writes the current list of guests to the serializer for persistence.
+     *
+     * @throws Exception If there is an error while storing the guest data.
+     */
     @Throws(Exception::class)
     fun store() {
         serializer.write(guests)

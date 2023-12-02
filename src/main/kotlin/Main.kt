@@ -1,24 +1,7 @@
-/**
- * Hotel Trivago Management System
- *
- * This program provides a menu-driven interface for managing guests and reservations
- * in a hotel. It supports functionalities such as adding, updating, and deleting guests,
- * archiving guests, listing guests based on their status, and managing reservations.
- * Guests and reservations are stored using a GuestAPI that utilizes different serializers
- * (XML, JSON, YAML) for persistence. The program allows saving and loading guest data.
- *
- * The main entry point is the [main] function, which displays a menu and calls
- * corresponding functions based on the user's choice.
- *
- * @author Raels Santers
- */
-
 import controllers.GuestAPI
 import models.Guest
 import models.Reservation
-import persistence.JSONSerializer
 import persistence.XMLSerializer
-import persistence.YAMLSerializer
 import utils.ScannerInput
 import java.io.File
 
@@ -59,7 +42,7 @@ fun main(args: Array<String>) {
  */
 fun mainMenu(): Int {
     return ScannerInput.readNextInt(
-            """
+        """
         > --------------------------------------------------
         > |         Hotel Trivago                          |
         > --------------------------------------------------
@@ -85,7 +68,6 @@ fun mainMenu(): Int {
         > ==>> """.trimMargin(">")
     )
 }
-
 
 /**
  * Adds a new guest by taking input from the user.
@@ -133,14 +115,13 @@ fun updateGuest() {
     }
 }
 
-
 /**
  * Displays a list of guests based on the user's choice.
  */
 fun listGuests() {
     if (guestAPI.numberOfGuests() > 0) {
         val option = ScannerInput.readNextInt(
-                """
+            """
                   > --------------------------------
                   > |   1) View ALL guests         |
                   > |   2) View ACTIVE guests      |
@@ -163,7 +144,6 @@ fun listGuests() {
 fun listAllGuests() = println(guestAPI.listAllGuests())
 fun listActiveGuests() = println(guestAPI.listActiveGuests())
 fun listArchivedGuests() = println(guestAPI.listArchivedGuests())
-
 
 /**
  * Archives an active guest, making them inactive.
@@ -202,7 +182,7 @@ fun deleteGuest() {
 fun searchGuests() {
     if (guestAPI.numberOfGuests() > 0) {
         val option = ScannerInput.readNextInt(
-                """
+            """
                   > --------------------------------
                   > |   1) search guest by ID      |
                   > |   2) search guest by name    |
@@ -225,7 +205,7 @@ fun searchGuests() {
  */
 fun searchGuestByID() {
     val searchID = ScannerInput.readNextInt("Enter the guestID to search by: ")
-    val searchResults = guestAPI.searchGuestsById(searchID)
+    val searchResults = guestAPI.searchGuestById(searchID)
     if (searchResults.isEmpty()) {
         println("No guests found")
     } else {
@@ -238,14 +218,13 @@ fun searchGuestByID() {
  */
 fun searchGuestByName() {
     val searchName = ScannerInput.readNextLine("Enter the guest Name to search by: ")
-    val searchResults = guestAPI.searchGuestsByName(searchName)
+    val searchResults = guestAPI.searchGuestByName(searchName)
     if (searchResults.isEmpty()) {
         println("No guests found")
     } else {
         println(searchResults)
     }
 }
-
 
 /**
  * Adds a reservation to an active guest based on user input.
@@ -296,7 +275,6 @@ private fun updateReservationInGuest() {
     }
 }
 
-
 /**
  * Deletes a reservation for an active guest based on user input.
  */
@@ -315,13 +293,12 @@ fun deleteAnReservation() {
     }
 }
 
-
 /**
  * Searches for reservations based on user input.
  */
 fun searchReservations() {
     val searchReservationId = ScannerInput.readNextInt("Enter the reservation ID: ")
-    val searchResults = guestAPI.searchReservationById(searchReservationId.toString())
+    val searchResults = guestAPI.searchReservationById(searchReservationId)
     if (searchResults.isEmpty()) {
         println("No items found")
     } else {
@@ -358,7 +335,6 @@ private fun askUserToChooseReservation(guest: Guest): Reservation? {
         return null
     }
 }
-
 
 /**
  * Saves guest data to a file.
