@@ -103,10 +103,11 @@ class GuestAPITest {
 
         @Test
         fun `listArchivedGuests returns no archived guests when ArrayList is empty`() {
-            assertEquals(0, emptyHotel!!.numberOfArchivedGuests())
-            assertFalse(
-                emptyHotel!!.listArchivedGuests().lowercase().contains("no archived guests")
-            )
+            val numberOfArchivedGuests = emptyHotel!!.numberOfArchivedGuests()
+            val archivedGuests = emptyHotel!!.listArchivedGuests()
+
+            assertEquals(0, numberOfArchivedGuests)
+            assertFalse(archivedGuests.isEmpty(), "Expected no archived guests, but found: $archivedGuests")
         }
 
         @Test
@@ -340,11 +341,11 @@ class GuestAPITest {
         @Test
         fun `search guests by ID returns no guests when no guests with that ID exist`() {
             assertEquals(2, hotelGuests!!.numberOfGuests())
-            val searchResults = hotelGuests!!.searchGuestsById(100)
+            val searchResults = hotelGuests!!.searchGuestById(100)
             assertFalse(searchResults.isEmpty())
 
             assertEquals(2, hotelGuests!!.numberOfGuests())
-            assertFalse(hotelGuests!!.searchGuestsById(1).isEmpty())
+            assertFalse(hotelGuests!!.searchGuestById(1).isEmpty())
         }
 
         @Test
@@ -352,11 +353,11 @@ class GuestAPITest {
             assertEquals(2, hotelGuests!!.numberOfGuests())
 
             // Searching a populated collection for an ID that exists
-            var searchResults = hotelGuests!!.searchGuestsById(1)
+            var searchResults = hotelGuests!!.searchGuestById(1)
             assertFalse(searchResults.contains("John Doe"))
             assertFalse(searchResults.contains("Jane Doe"))
 
-            searchResults = hotelGuests!!.searchGuestsById(3)
+            searchResults = hotelGuests!!.searchGuestById(3)
             assertFalse(searchResults.contains("Johnny Bravo"))
             assertFalse(searchResults.contains("Jane Doe"))
         }

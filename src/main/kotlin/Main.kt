@@ -1,18 +1,3 @@
-/**
- * Hotel Trivago Management System
- *
- * This program provides a menu-driven interface for managing guests and reservations
- * in a hotel. It supports functionalities such as adding, updating, and deleting guests,
- * archiving guests, listing guests based on their status, and managing reservations.
- * Guests and reservations are stored using a GuestAPI that utilizes different serializers
- * (XML, JSON, YAML) for persistence. The program allows saving and loading guest data.
- *
- * The main entry point is the [main] function, which displays a menu and calls
- * corresponding functions based on the user's choice.
- *
- * @author Raels Santers
- */
-
 import controllers.GuestAPI
 import models.Guest
 import models.Reservation
@@ -21,8 +6,15 @@ import utils.ScannerInput
 import java.io.File
 
 private val guestAPI = GuestAPI(XMLSerializer(File("guests.xml")))
+// private val guestAPI = GuestAPI(JSONSerializer(File("guests.json")))
+// val guestAPI = GuestAPI(YAMLSerializer(File("guests.yaml")))
 
-fun main() {
+/**
+ * Entry point of the program. Displays the main menu and handles user input.
+ *
+ * @param args Command-line arguments (not used in this application).
+ */
+fun main(args: Array<String>) {
     var choice: Int
     do {
         choice = mainMenu()
@@ -43,6 +35,11 @@ fun main() {
     } while (choice != 0)
 }
 
+/**
+ * Displays the main menu and reads the user's choice.
+ *
+ * @return The user's menu choice.
+ */
 fun mainMenu(): Int {
     return ScannerInput.readNextInt(
         """
@@ -58,10 +55,10 @@ fun mainMenu(): Int {
         > |   6) list guests                               |
         > |------------------------------------------------|
         > | Reservation Menu                               |
-        > |   7) Add reservation to guest                   |
-        > |   8) Update reservation in guest               |
-        > |   9) Delete reservation from guest              |
-        > |   10) Search reservations                       |
+        > |   7) add reservation to guest                  |
+        > |   8) update reservation contents in guest      |
+        > |   9) delete reservation from guest             |
+        > |   10) search reservations                      |
         > --------------------------------------------------
         > |   20) Save Guests                              |
         > |   21) Load Guests                              |
@@ -80,14 +77,7 @@ fun addGuest() {
     val guestName = ScannerInput.readNextLine("Enter name of guest: ")
     val guestPhone = ScannerInput.readNextLine("Enter guest phone number: ")
     val guestEmail = ScannerInput.readNextLine("Enter guest email: ")
-    val isAdded = guestAPI.add(
-        Guest(
-            guestID = guestID,
-            guestName = guestName,
-            guestPhone = guestPhone,
-            guestEmail = guestEmail
-        )
-    )
+    val isAdded = guestAPI.add(Guest(guestID = guestID, guestName = guestName, guestPhone = guestPhone, guestEmail = guestEmail))
 
     if (isAdded) {
         println("Added Successfully")
@@ -215,7 +205,7 @@ fun searchGuests() {
  */
 fun searchGuestByID() {
     val searchID = ScannerInput.readNextInt("Enter the guestID to search by: ")
-    val searchResults = guestAPI.searchGuestsById(searchID)
+    val searchResults = guestAPI.searchGuestById(searchID)
     if (searchResults.isEmpty()) {
         println("No guests found")
     } else {
@@ -228,7 +218,7 @@ fun searchGuestByID() {
  */
 fun searchGuestByName() {
     val searchName = ScannerInput.readNextLine("Enter the guest Name to search by: ")
-    val searchResults = guestAPI.searchGuestsByName(searchName)
+    val searchResults = guestAPI.searchGuestByName(searchName)
     if (searchResults.isEmpty()) {
         println("No guests found")
     } else {
@@ -308,7 +298,7 @@ fun deleteAnReservation() {
  */
 fun searchReservations() {
     val searchReservationId = ScannerInput.readNextInt("Enter the reservation ID: ")
-    val searchResults = guestAPI.searchReservationById(searchReservationId.toString())
+    val searchResults = guestAPI.searchReservationById(searchReservationId)
     if (searchResults.isEmpty()) {
         println("No items found")
     } else {
