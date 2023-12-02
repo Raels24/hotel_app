@@ -28,3 +28,28 @@ jobs:
         with:
           name: Jar with Dependencies
           path: build/libs
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      # Runs the Gradle test task
+      - name: Test with Gradle
+        run: ./gradlew test --tests "*"
+
+      # Archive test report
+      - name: Archive test report
+        uses: actions/upload-artifact@v2
+        with:
+          name: Test report
+          path: build/reports/tests/test
+
+      # Archive code coverage report
+      - name: Archive coverage report
+        uses: actions/upload-artifact@v2
+        with:
+          name: Code Coverage report
+          path: build/reports/jacoco/test/html
