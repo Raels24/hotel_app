@@ -18,10 +18,7 @@ class GuestAPI(serializerType: Serializer) {
         return lastId
     }
 
-
     fun numberOfGuests() = guests.size
-
-
 
     // ----------------------------------------------
     //  CRUD METHODS FOR guest ArrayList
@@ -29,12 +26,9 @@ class GuestAPI(serializerType: Serializer) {
     fun add(guest: Guest): Boolean {
         guest.guestID = getId()
         val added = guests.add(guest)
-        lastId = guest.guestID  // Update lastId after adding the guest
+        lastId = guest.guestID // Update lastId after adding the guest
         return added
     }
-
-
-
 
     fun delete(id: Int): Boolean {
         val guestToDelete = findGuest(id)
@@ -45,8 +39,6 @@ class GuestAPI(serializerType: Serializer) {
             false
         }
     }
-
-
 
     fun update(id: Int, updatedGuest: Guest?): Boolean {
         // find the guest object by the index number
@@ -69,11 +61,7 @@ class GuestAPI(serializerType: Serializer) {
         return guests.find { it.guestID == id }
     }
 
-
-
-
-
-        fun searchGuestsById(searchGuestId: Int): String {
+    fun searchGuestsById(searchGuestId: Int): String {
         val matchingGuests = guests.filter { it.guestID == searchGuestId }
         if (matchingGuests.isNotEmpty()) {
             return matchingGuests.joinToString(separator = "\n") { guest ->
@@ -83,7 +71,6 @@ class GuestAPI(serializerType: Serializer) {
             return "Guest not found."
         }
     }
-
 
     fun archiveGuest(indexToArchive: Int): Boolean {
         if (isValidIndex(indexToArchive)) {
@@ -96,21 +83,29 @@ class GuestAPI(serializerType: Serializer) {
         return false
     }
 
-
     // ----------------------------------------------
     //  LISTING METHODS FOR Guest ArrayList
     // ----------------------------------------------
     fun listAllGuests() =
-        if (guests.isEmpty()) "No guests stored"
-        else formatListString(guests)
+        if (guests.isEmpty()) {
+            "No guests stored"
+        } else {
+            formatListString(guests)
+        }
 
     fun listActiveGuests() =
-        if (numberOfActiveGuests() == 0) "No active Guest stored"
-        else formatListString(guests.filter { guest -> !guest.isGuestArchived })
+        if (numberOfActiveGuests() == 0) {
+            "No active Guest stored"
+        } else {
+            formatListString(guests.filter { guest -> !guest.isGuestArchived })
+        }
 
     fun listArchivedGuests() =
-        if (numberOfArchivedGuests() == 0) "No archived Guest stored"
-        else formatListString(guests.filter { guest -> guest.isGuestArchived })
+        if (numberOfArchivedGuests() == 0) {
+            "No archived Guest stored"
+        } else {
+            formatListString(guests.filter { guest -> guest.isGuestArchived })
+        }
 
     // ----------------------------------------------
     //  COUNTING METHODS FOR Guest ArrayList
@@ -143,17 +138,14 @@ class GuestAPI(serializerType: Serializer) {
         }
     }
 
-
-
-
     /**
      * Checks if the given index is within the valid range for the notes list.
      *
      * @param index The index to be validated.
      * @return `true` if the index is valid, `false` otherwise.
      */
-    fun isValidIndex(index: Int) :Boolean{
-        return isValidListIndex(index, guests);
+    fun isValidIndex(index: Int): Boolean {
+        return isValidListIndex(index, guests)
     }
 
     @Throws(Exception::class)
@@ -166,4 +158,3 @@ class GuestAPI(serializerType: Serializer) {
         serializer.write(guests)
     }
 }
-
