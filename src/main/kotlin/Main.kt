@@ -13,8 +13,6 @@
  * @author Raels Santers
  */
 
-
-
 import controllers.GuestAPI
 import models.Guest
 import models.Reservation
@@ -27,7 +25,6 @@ import java.io.File
 private val guestAPI = GuestAPI(XMLSerializer(File("guests.xml")))
 // private val guestAPI = GuestAPI(JSONSerializer(File("guests.json")))
 // val guestAPI = GuestAPI(YAMLSerializer(File("guests.yaml")))
-
 
 /**
  * Entry point of the program. Displays the main menu and handles user input.
@@ -54,7 +51,6 @@ fun main(args: Array<String>) {
         }
     } while (choice != 0)
 }
-
 
 /**
  * Displays the main menu and reads the user's choice.
