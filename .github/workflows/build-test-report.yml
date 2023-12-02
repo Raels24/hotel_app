@@ -57,3 +57,25 @@ jobs:
         with:
           name: Code Coverage report
           path: build/reports/jacoco/test/html
+
+  documentation:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      # Make the Gradlew script executable
+      - name: Make Gradlew Executable
+        run: chmod +x ./gradlew
+
+      # Runs the Gradle dokkaHtml task
+      - name: Dokka with Gradle
+        run: ./gradlew dokkaHtml
+
+      # Archive KDoc Documentation
+      - name: Archive KDoc Documentation
+        uses: actions/upload-artifact@v2
+        with:
+          name: KDoc Documentation Site
+          path: build/dokka/html
