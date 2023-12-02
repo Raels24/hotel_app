@@ -36,6 +36,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      # Make the Gradlew script executable
+      - name: Make Gradlew Executable
+        run: chmod +x ./gradlew
+
       # Runs the Gradle test task
       - name: Test with Gradle
         run: ./gradlew test --tests "*"
