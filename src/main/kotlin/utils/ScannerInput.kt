@@ -1,7 +1,7 @@
 package utils
 
 import java.lang.NumberFormatException
-import java.util.Scanner
+import java.util.*
 
 /**
  * This class provides methods for the robust handling of I/O using Scanner.
@@ -84,7 +84,7 @@ object ScannerInput {
     fun readNextBoolean(prompt: String): Boolean {
         while (true) {
             print("$prompt (Yes/No): ")
-            val input = scanner.next().toLowerCase()
+            val input = scanner.next().lowercase(Locale.getDefault())
             when (input) {
                 "yes" -> return true
                 "no" -> return false
