@@ -16,22 +16,13 @@
 import controllers.GuestAPI
 import models.Guest
 import models.Reservation
-import persistence.JSONSerializer
 import persistence.XMLSerializer
-import persistence.YAMLSerializer
 import utils.ScannerInput
 import java.io.File
 
 private val guestAPI = GuestAPI(XMLSerializer(File("guests.xml")))
-// private val guestAPI = GuestAPI(JSONSerializer(File("guests.json")))
-// val guestAPI = GuestAPI(YAMLSerializer(File("guests.yaml")))
 
-/**
- * Entry point of the program. Displays the main menu and handles user input.
- *
- * @param args Command-line arguments (not used in this application).
- */
-fun main(args: Array<String>) {
+fun main() {
     var choice: Int
     do {
         choice = mainMenu()
@@ -52,14 +43,9 @@ fun main(args: Array<String>) {
     } while (choice != 0)
 }
 
-/**
- * Displays the main menu and reads the user's choice.
- *
- * @return The user's menu choice.
- */
 fun mainMenu(): Int {
     return ScannerInput.readNextInt(
-            """
+        """
         > --------------------------------------------------
         > |         Hotel Trivago                          |
         > --------------------------------------------------
@@ -72,10 +58,10 @@ fun mainMenu(): Int {
         > |   6) list guests                               |
         > |------------------------------------------------|
         > | Reservation Menu                               |
-        > |   7) add reservation to guest                  |
-        > |   8) update reservation contents in guest      |
-        > |   9) delete reservation from guest             |
-        > |   10) search reservations                      |
+        > |   7) Add reservation to guest                   |
+        > |   8) Update reservation in guest               |
+        > |   9) Delete reservation from guest              |
+        > |   10) Search reservations                       |
         > --------------------------------------------------
         > |   20) Save Guests                              |
         > |   21) Load Guests                              |
@@ -86,7 +72,6 @@ fun mainMenu(): Int {
     )
 }
 
-
 /**
  * Adds a new guest by taking input from the user.
  */
@@ -95,7 +80,14 @@ fun addGuest() {
     val guestName = ScannerInput.readNextLine("Enter name of guest: ")
     val guestPhone = ScannerInput.readNextLine("Enter guest phone number: ")
     val guestEmail = ScannerInput.readNextLine("Enter guest email: ")
-    val isAdded = guestAPI.add(Guest(guestID = guestID, guestName = guestName, guestPhone = guestPhone, guestEmail = guestEmail))
+    val isAdded = guestAPI.add(
+        Guest(
+            guestID = guestID,
+            guestName = guestName,
+            guestPhone = guestPhone,
+            guestEmail = guestEmail
+        )
+    )
 
     if (isAdded) {
         println("Added Successfully")
@@ -133,14 +125,13 @@ fun updateGuest() {
     }
 }
 
-
 /**
  * Displays a list of guests based on the user's choice.
  */
 fun listGuests() {
     if (guestAPI.numberOfGuests() > 0) {
         val option = ScannerInput.readNextInt(
-                """
+            """
                   > --------------------------------
                   > |   1) View ALL guests         |
                   > |   2) View ACTIVE guests      |
@@ -163,7 +154,6 @@ fun listGuests() {
 fun listAllGuests() = println(guestAPI.listAllGuests())
 fun listActiveGuests() = println(guestAPI.listActiveGuests())
 fun listArchivedGuests() = println(guestAPI.listArchivedGuests())
-
 
 /**
  * Archives an active guest, making them inactive.
@@ -202,7 +192,7 @@ fun deleteGuest() {
 fun searchGuests() {
     if (guestAPI.numberOfGuests() > 0) {
         val option = ScannerInput.readNextInt(
-                """
+            """
                   > --------------------------------
                   > |   1) search guest by ID      |
                   > |   2) search guest by name    |
@@ -245,7 +235,6 @@ fun searchGuestByName() {
         println(searchResults)
     }
 }
-
 
 /**
  * Adds a reservation to an active guest based on user input.
@@ -296,7 +285,6 @@ private fun updateReservationInGuest() {
     }
 }
 
-
 /**
  * Deletes a reservation for an active guest based on user input.
  */
@@ -314,7 +302,6 @@ fun deleteAnReservation() {
         }
     }
 }
-
 
 /**
  * Searches for reservations based on user input.
@@ -358,7 +345,6 @@ private fun askUserToChooseReservation(guest: Guest): Reservation? {
         return null
     }
 }
-
 
 /**
  * Saves guest data to a file.
