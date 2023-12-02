@@ -14,6 +14,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      # Make the Gradlew script executable
+      - name: Make Gradlew Executable
+        run: chmod +x ./gradlew
+
       # Run the Gradle build task, excluding JUnit tests
       - name: Run the Gradle Build (Exclude Tests)
         run: ./gradlew build -x test
