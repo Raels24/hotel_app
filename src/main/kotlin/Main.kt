@@ -1,12 +1,40 @@
+
+/**
+ * Hotel Trivago Management System
+ *
+ * This program provides a menu-driven interface for managing guests and reservations
+ * in a hotel. It supports functionalities such as adding, updating, and deleting guests,
+ * archiving guests, listing guests based on their status, and managing reservations.
+ * Guests and reservations are stored using a GuestAPI that utilizes different serializers
+ * (XML, JSON, YAML) for persistence. The program allows saving and loading guest data.
+ *
+ * The main entry point is the [main] function, which displays a menu and calls
+ * corresponding functions based on the user's choice.
+ *
+ * @author Raels Santers
+ */
+
+
+
 import controllers.GuestAPI
 import models.Guest
 import models.Reservation
+import persistence.JSONSerializer
 import persistence.XMLSerializer
+import persistence.YAMLSerializer
 import utils.ScannerInput
 import java.io.File
 
 private val guestAPI = GuestAPI(XMLSerializer(File("guests.xml")))
+//private val guestAPI = GuestAPI(JSONSerializer(File("guests.json")))
+ //val guestAPI = GuestAPI(YAMLSerializer(File("guests.yaml")))
 
+
+/**
+ * Entry point of the program. Displays the main menu and handles user input.
+ *
+ * @param args Command-line arguments (not used in this application).
+ */
 fun main(args: Array<String>) {
     var choice: Int
     do {
@@ -15,7 +43,7 @@ fun main(args: Array<String>) {
             1 -> addGuest()
             2 -> updateGuest()
             3 -> deleteGuest()
-            4 -> searchGuest()
+            4 -> searchGuests()
             5 -> archiveGuest()
             6 -> listGuests()
             7 -> addReservationToGuest()
@@ -28,6 +56,12 @@ fun main(args: Array<String>) {
     } while (choice != 0)
 }
 
+
+/**
+ * Displays the main menu and reads the user's choice.
+ *
+ * @return The user's menu choice.
+ */
 fun mainMenu(): Int {
     return ScannerInput.readNextInt(
         """
@@ -38,7 +72,7 @@ fun mainMenu(): Int {
         > |   1) Add a Guest                               |
         > |   2) Update a guest                            |
         > |   3) Delete a guest                            |
-        > |   4) Search guest                              |
+        > |   4) Search guests                             |
         > |   5) Archive guest                             |
         > |   6) list guests                               |
         > |------------------------------------------------|
@@ -57,6 +91,10 @@ fun mainMenu(): Int {
     )
 }
 
+
+/**
+ * Adds a new guest by taking input from the user.
+ */
 fun addGuest() {
     val guestID = ScannerInput.readNextInt("Enter ID for a guest: ")
     val guestName = ScannerInput.readNextLine("Enter name of guest: ")
@@ -71,6 +109,9 @@ fun addGuest() {
     }
 }
 
+/**
+ * Updates an existing guest by taking input from the user.
+ */
 fun updateGuest() {
     listGuests()
     if (guestAPI.numberOfGuests() > 0) {
@@ -97,6 +138,10 @@ fun updateGuest() {
     }
 }
 
+
+/**
+ * Displays a list of guests based on the user's choice.
+ */
 fun listGuests() {
     if (guestAPI.numberOfGuests() > 0) {
         val option = ScannerInput.readNextInt(
@@ -124,6 +169,10 @@ fun listAllGuests() = println(guestAPI.listAllGuests())
 fun listActiveGuests() = println(guestAPI.listActiveGuests())
 fun listArchivedGuests() = println(guestAPI.listArchivedGuests())
 
+
+/**
+ * Archives an active guest, making them inactive.
+ */
 fun archiveGuest() {
     listActiveGuests()
     if (guestAPI.numberOfActiveGuests() > 0) {
@@ -137,6 +186,10 @@ fun archiveGuest() {
         }
     }
 }
+
+/**
+ * Deletes a guest based on user input.
+ */
 fun deleteGuest() {
     val guestID = ScannerInput.readNextInt("Enter ID of the guest to delete: ")
     val isDeleted = guestAPI.delete(guestID)
@@ -148,16 +201,60 @@ fun deleteGuest() {
     }
 }
 
-fun searchGuest() {
+/**
+ * Searches for guests based on user input.
+ */
+fun searchGuests() {
+    if (guestAPI.numberOfGuests() > 0) {
+        val option = ScannerInput.readNextInt(
+            """
+                  > --------------------------------
+                  > |   1) search guest by ID      |
+                  > |   2) search guest by name    |
+                  > --------------------------------
+         > ==>> """.trimMargin(">")
+        )
+
+        when (option) {
+            1 -> searchGuestByID()
+            2 -> searchGuestByName()
+            else -> println("Invalid option entered: $option")
+        }
+    } else {
+        println("Option Invalid - No Guests stored")
+    }
+}
+
+/**
+ * Searches for a guest by their ID.
+ */
+fun searchGuestByID() {
     val searchID = ScannerInput.readNextInt("Enter the guestID to search by: ")
     val searchResults = guestAPI.searchGuestsById(searchID)
     if (searchResults.isEmpty()) {
-        println("No notes found")
+        println("No guests found")
     } else {
         println(searchResults)
     }
 }
 
+/**
+ * Searches for a guest by their name.
+ */
+fun searchGuestByName() {
+    val searchName = ScannerInput.readNextLine("Enter the guest Name to search by: ")
+    val searchResults = guestAPI.searchGuestsByName(searchName)
+    if (searchResults.isEmpty()) {
+        println("No guests found")
+    } else {
+        println(searchResults)
+    }
+}
+
+
+/**
+ * Adds a reservation to an active guest based on user input.
+ */
 private fun addReservationToGuest() {
     val guest: Guest? = askUserToChooseActiveGuest()
     if (guest != null) {
@@ -177,6 +274,9 @@ private fun addReservationToGuest() {
     }
 }
 
+/**
+ * Updates a reservation for an active guest based on user input.
+ */
 private fun updateReservationInGuest() {
     val guest: Guest? = askUserToChooseActiveGuest()
     if (guest != null) {
@@ -201,6 +301,10 @@ private fun updateReservationInGuest() {
     }
 }
 
+
+/**
+ * Deletes a reservation for an active guest based on user input.
+ */
 fun deleteAnReservation() {
     val guest: Guest? = askUserToChooseActiveGuest()
     if (guest != null) {
@@ -216,6 +320,10 @@ fun deleteAnReservation() {
     }
 }
 
+
+/**
+ * Searches for reservations based on user input.
+ */
 fun searchReservations() {
     val searchReservationId = ScannerInput.readNextInt("Enter the reservation ID: ")
     val searchResults = guestAPI.searchReservationById(searchReservationId.toString())
@@ -256,6 +364,10 @@ private fun askUserToChooseReservation(guest: Guest): Reservation? {
     }
 }
 
+
+/**
+ * Saves guest data to a file.
+ */
 fun save() {
     try {
         guestAPI.store()
@@ -265,6 +377,9 @@ fun save() {
     }
 }
 
+/**
+ * Loads guest data from a file.
+ */
 fun load() {
     try {
         guestAPI.load()

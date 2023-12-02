@@ -360,5 +360,30 @@ class GuestAPITest {
             assertFalse(searchResults.contains("Johnny Bravo"))
             assertFalse(searchResults.contains("Jane Doe"))
         }
+
+        @Test
+        fun `search guests by name returns no guests when no guests with that name exist`() {
+            assertEquals(2, hotelGuests!!.numberOfGuests())
+            val searchResults = hotelGuests!!.searchGuestsByName("No Name")
+            assertFalse(searchResults.isEmpty())
+
+            assertEquals(2, hotelGuests!!.numberOfGuests())
+            assertFalse(hotelGuests!!.searchGuestsByName("diff name").isEmpty())
+        }
+
+        @Test
+        fun `search guests by name returns guests when guests with that name exist`() {
+            assertEquals(2, hotelGuests!!.numberOfGuests())
+
+            // Searching a populated collection for a name that exists
+            var searchResults = hotelGuests!!.searchGuestsByName("joe")
+            assertTrue(searchResults.contains("joe"))
+            assertFalse(searchResults.contains("emma"))
+
+            searchResults = hotelGuests!!.searchGuestsByName("emma")
+            assertFalse(searchResults.contains("emma"))
+            assertFalse(searchResults.contains("joe"))
+        }
+
     }
 }
