@@ -35,3 +35,12 @@ Welcome to the Hotel App, a powerful system designed to help you efficiently man
   3. Extract the ZIP File:
      - After the ZIP file is downloaded, extract its contents using your computer's built-in ZIP extraction tool or a third-party tool.
     
+
+  <h2>Why use hotel_app</h2>
+
+  -Free
+    
+  -Easy to use
+  
+  -Good preformance
+    
