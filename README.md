@@ -38,9 +38,9 @@ Welcome to the Hotel App, a powerful system designed to help you efficiently man
 
   <h2>Why use hotel_app</h2>
 
-  -Free
+  - Free
     
-  -Easy to use
+  - Easy to use
   
-  -Good preformance
+  - Good preformance
     
